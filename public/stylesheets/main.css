@@ -1,0 +1,15 @@
+#chat-area {
+	background-color:#00AA55;
+	height: 600px;
+	width: 500px;
+}
+
+#chat-input {
+	width: 80%;
+	
+}
+
+#conversation {
+	width:100%;
+	height: 500px;
+}

@@ -17,7 +17,7 @@
 		});
 		
 	  socket.on('update', function (data) {
-			$('#chat-area').append("<li>" + data['text'] + "</li>")
+			$('#conversation').append("<p>" + data['text'] + "</p>")
 	  });
 	});
 })(this)
