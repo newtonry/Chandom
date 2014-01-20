@@ -9,4 +9,9 @@
 	Chat.prototype.sendMessage = function(message) {
 		this.socket.emit('message', { text: message });
 	};
+	
+	Chat.prototype.setName = function(message) {
+		this.socket.emit('name', { name: message });
+	};
+	
 })(this)
