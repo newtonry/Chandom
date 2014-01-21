@@ -10,8 +10,12 @@
 		this.socket.emit('message', { text: message });
 	};
 	
-	Chat.prototype.setName = function(message) {
-		this.socket.emit('name', { name: message });
+	Chat.prototype.setName = function(name) {
+		this.socket.emit('name', { name: name });
+	};
+
+	Chat.prototype.setRoom = function(roomname) {
+		this.socket.emit('room', { room: roomname });
 	};
 	
-})(this)
+})(this);

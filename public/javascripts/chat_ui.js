@@ -7,7 +7,16 @@
 	var handleInput = function() {
 		var input = $("#chat-input").val();
 		$("#chat-input").val('');
-		chat.setName(input);
+		
+		if (!username) {
+			chat.setName(input);
+		} else if (input.slice(0,6) === "/name ") {
+			chat.setName(input.slice(6, input.length));
+		} else if (input.slice(0,6) === "/room ") {
+			chat.setRoom(input.slice(6, input.length));
+		} else {
+			chat.sendMessage(input);
+		}
 		
 	}
 
@@ -27,7 +36,6 @@
 		
 		socket.on('setName', function (data){
 			username = data.name;
-			debugger
 		});
 		
 		
@@ -35,6 +43,8 @@
 
 	$(document).ready(function() {
 		chat = new Chandom.Chat(socket);
+
+		$('#conversation').append("<p class='success'>Welcome to Chandom! Please choose a username.</p>");
 
 		setupSocketListeners();
 		
@@ -45,4 +55,4 @@
 		
 		
 	});
-})(this)
+})(this);
