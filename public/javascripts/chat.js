@@ -3,7 +3,6 @@
 	
 	var Chat = Chandom.Chat = function(socket) {
 		this.socket = socket;
-		
 	};
 	
 	Chat.prototype.sendMessage = function(message) {
@@ -18,4 +17,7 @@
 		this.socket.emit('room', { room: roomname });
 	};
 	
+	Chat.prototype.listRooms = function() {
+		this.socket.emit('listRooms');
+	};
 })(this);

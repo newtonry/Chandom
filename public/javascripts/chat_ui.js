@@ -2,7 +2,6 @@
 	var Chandom = root.Chandom = (root.Chandom || {});
 	var socket = io.connect();
 	var username;
-	
 		
 	var handleInput = function() {
 		var input = $("#chat-input").val();
@@ -12,14 +11,14 @@
 			chat.setName(input);
 		} else if (input.slice(0,6) === "/name ") {
 			chat.setName(input.slice(6, input.length));
-		} else if (input.slice(0,6) === "/room ") {
+		} else if (input.slice(0,6) === "/join ") {
 			chat.setRoom(input.slice(6, input.length));
+		} else if (input.slice(0,6) === "/rooms") {
+			chat.listRooms();
 		} else {
 			chat.sendMessage(input);
 		}
-		
-	}
-
+	};
 
 	var setupSocketListeners = function() {
 	  socket.on('normalMsg', function (data) {
@@ -37,8 +36,6 @@
 		socket.on('setName', function (data){
 			username = data.name;
 		});
-		
-		
 	};
 
 	$(document).ready(function() {
@@ -48,11 +45,14 @@
 
 		setupSocketListeners();
 		
+		$("#chat-input").keyup(function(event){
+			if(event.keyCode == 13){
+	      handleInput();
+	    }
+		});
+		
 		$("#send-input").click(function() {
 			handleInput();
 		});
-		
-		
-		
 	});
 })(this);

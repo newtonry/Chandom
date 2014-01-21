@@ -2,49 +2,39 @@ var socketio = require('socket.io');
 var User = require('./lib/user.js');
 var takenNames = [];
 var users = {};
-var rooms = {};
 	
 var createChat = function(server) {
 	var io = socketio.listen(server);
 	
 	io.sockets.on('connection', function(socket){
-		// socket.emit('update', {text: "You have joined!"});
-		// socket.emit('successMsg', {text: "Please choose a name:"});
-		
 		setupNameListener(socket);
 		setupRoomChangeListener(socket);
 		setupMessageListener(socket, io);
-
-		// socket.on('room', )
+		setupRoomListListener(socket, io);
 		
-	  // io.sockets.emit('update', {text: "A new person has joined!"});
+		//should write an on disconnect too
 		
-		// socket.on('message', function (data) {
-		// 	    io.sockets.emit('update', data);
-		// 	console.log(takenNames);
-		// 	console.log(data);
-		// 	  });
 	});
 };
 
 var setupMessageListener = function(socket, io) {
 	socket.on('message', function(data) {
 		var user = users[socket.id] = (users[socket.id] || new User(socket.id));
+
 		if (!user.name) {
 			socket.emit('warningMsg', {text: "You must have a name if you want a voice! Please set it with /name yourname"});
 		} else if (!user.room) {
-			socket.emit('warningMsg', {text: "It's lonely in here. Please join a room with /room roomname"});
+			socket.emit('warningMsg', {text: "It's lonely in here. Please join a room with /join roomname"});
 		} else {
-			
-			messageToRoom(escapeHTML(data.text), user.room, io);
-			// io.sockets.emit('normalMsg', {text: data.text});
+			io.sockets.in(user.room).emit('normalMsg', {text: users[socket.id].name + ": " + escapeHTML(data.text)});
 		}
 	});
 };
 
 var setupNameListener = function(socket) {
 	socket.on('name', function (data) {
-		var name = escapeHTML(data.name)
+		var name = escapeHTML(data.name);
+		
 		if (indexOf(name, takenNames) != -1) {
 			socket.emit('warningMsg', {text: name + " is already taken! Please choose another name."});
 		} else {
@@ -63,23 +53,28 @@ var setupNameListener = function(socket) {
 var setupRoomChangeListener = function(socket) {
 	socket.on('room', function(data) {
 		var room = escapeHTML(data.room);
-		//creates new room if it doesn't exist
-		rooms[room] = (rooms[room] || []);
-		rooms[room].push(socket.id);
-
-		//needs to remove person from old room too
-		users[socket.id].room = room;
 		
+		//leave old room
+		if(users[socket.id].room) {
+			socket.leave(users[socket.id].room);
+		}
+
+		users[socket.id].room = room;
+		socket.join(room);		
 		socket.emit('successMsg', {text: "You're now in " + room});
+		socket.broadcast.to(room).emit('successMsg', {text: users[socket.id].name + " has joined the room"});
 	});
 };
 
-var messageToRoom = function(message, room, io) {
-	for(var i=0; i < rooms[room]; i++) {
-
-		//get this working
-		io.sockets.socket[rooms[room][i]].emit('normalMsg', message);
-	}
+var setupRoomListListener = function(socket, io) {
+	socket.on('listRooms', function() {
+		socket.emit('normalMsg', {text: "The rooms are: "});
+		for(var room in io.sockets.manager.rooms) {
+			if (room != "") {
+				io.sockets.emit('normalMsg', {text: "*" + room.slice(1,room.length)});
+			}
+		}
+	});
 };
 
 var removeFromTakenNames = function(name) {
