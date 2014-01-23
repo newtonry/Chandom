@@ -7,26 +7,26 @@ var createChat = function(server) {
 	var io = socketio.listen(server);
 	
 	io.sockets.on('connection', function(socket){
+		users[socket.id] = new User(socket.id);
+	
 		setupNameListener(socket);
 		setupRoomChangeListener(socket);
 		setupMessageListener(socket, io);
 		setupRoomListListener(socket, io);
-		
-		//should write an on disconnect too
-		
+		setupDisconnectListener(socket, io)
 	});
 };
 
 var setupMessageListener = function(socket, io) {
 	socket.on('message', function(data) {
-		var user = users[socket.id] = (users[socket.id] || new User(socket.id));
+		var user = users[socket.id];
 
-		if (!user.name) {
+		if (!users[socket.id].name) {
 			socket.emit('warningMsg', {text: "You must have a name if you want a voice! Please set it with /name yourname"});
-		} else if (!user.room) {
+		} else if (!users[socket.id].room) {
 			socket.emit('warningMsg', {text: "It's lonely in here. Please join a room with /join roomname"});
 		} else {
-			io.sockets.in(user.room).emit('normalMsg', {text: users[socket.id].name + ": " + escapeHTML(data.text)});
+			io.sockets.in(users[socket.id].room).emit('normalMsg', {text: users[socket.id].name + ": " + escapeHTML(data.text)});
 		}
 	});
 };
@@ -37,8 +37,9 @@ var setupNameListener = function(socket) {
 		
 		if (indexOf(name, takenNames) != -1) {
 			socket.emit('warningMsg', {text: name + " is already taken! Please choose another name."});
+		} else if (name === "") {
+			socket.emit('warningMsg', {text: "That is not a valid name!"});			
 		} else {
-			users[socket.id] = (users[socket.id] || new User(socket.id));
 			removeFromTakenNames(users[socket.id].name);
 
 			users[socket.id].name = name;				
@@ -77,6 +78,22 @@ var setupRoomListListener = function(socket, io) {
 	});
 };
 
+var setupDisconnectListener = function(socket) {
+	socket.on('disconnect', function(){
+		
+		var room = users[socket.id].room//delete this line
+		
+		if (users[socket.id].room) {
+			socket.broadcast.to(users[socket.id].room).emit('normalMsg', {text: users[socket.id].name + " has left the room"});
+		}		
+		if(users[socket.id].name) {
+			removeFromTakenNames(users[socket.id].name);
+		}
+		
+		delete users[socket.id];
+	});
+};
+
 var removeFromTakenNames = function(name) {
 	var ind = indexOf(name, takenNames);
 	if (ind != -1) {
@@ -97,6 +114,5 @@ var indexOf = function(value, arr) {
 function escapeHTML(input) {
     return String(input).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
-
 
 exports.createChat = createChat;
