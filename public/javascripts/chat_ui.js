@@ -22,15 +22,18 @@
 
 	var setupSocketListeners = function() {
 	  socket.on('normalMsg', function (data) {
-			$('#conversation').append("<p>" + data['text'] + "</p>")
+			$('#chat-log').append("<p>" + data['text'] + "</p>");
+			$("#chat-log").scrollTop($("#chat-log")[0].scrollHeight);
 	  });
 
 	  socket.on('warningMsg', function (data) {
-			$('#conversation').append("<p class='warning'>" + data['text'] + "</p>")
+			$('#chat-log').append("<p class='warning'>" + data['text'] + "</p>");
+			$("#chat-log").scrollTop($("#chat-log")[0].scrollHeight);
 	  });
 
 	  socket.on('successMsg', function (data) {
-			$('#conversation').append("<p class='success'>" + data['text'] + "</p>")
+			$('#chat-log').append("<p class='success'>" + data['text'] + "</p>");
+			$("#chat-log").scrollTop($("#chat-log")[0].scrollHeight);
 		});
 		
 		socket.on('setName', function (data){
@@ -41,7 +44,7 @@
 	$(document).ready(function() {
 		chat = new Chandom.Chat(socket);
 
-		$('#conversation').append("<p class='success'>Welcome to Chandom! Please choose a username.</p>");
+		$('#chat-log').append("<p class='success'>Welcome to Chandom! Please choose a username.</p>");
 
 		setupSocketListeners();
 		
