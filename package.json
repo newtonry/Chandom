@@ -1,7 +1,7 @@
 {
     "name": "chandom",
-    "description": "Chat",
-    "version": "0.0.1",
+    "description": "A randomized chat application",
+    "version": "0.9.9",
     "private": true,
     "dependencies": {
       "socket.io": "~0.9.6",
