@@ -6,7 +6,7 @@ var server = http.createServer(function(request, response){
 	router(request, response);
 });
 
-server.listen(8000);
+server.listen(process.env.PORT || 3000);
 createChat(server);
 
 console.log("Server Started");
