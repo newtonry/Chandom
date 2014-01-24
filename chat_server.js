@@ -10,7 +10,7 @@ var createChat = function(server) {
 		users[socket.id] = new User(socket.id);
 	
 		setupNameListener(socket);
-		setupRoomChangeListener(socket);
+		setupRoomChangeListener(socket, io);
 		setupMessageListener(socket, io);
 		setupRoomListListener(socket, io);
 		setupDisconnectListener(socket, io)
@@ -51,7 +51,7 @@ var setupNameListener = function(socket) {
 	});
 };
 
-var setupRoomChangeListener = function(socket) {
+var setupRoomChangeListener = function(socket, io) {
 	socket.on('room', function(data) {
 		var room = escapeHTML(data.room);
 		
@@ -59,24 +59,25 @@ var setupRoomChangeListener = function(socket) {
 		if(users[socket.id].room) {
 			socket.leave(users[socket.id].room);
 		}
+		var usernames = getUsernamesInRoom(room, io);
 
 		users[socket.id].room = room;
 		socket.join(room);		
 		socket.emit('successMsg', {text: "You're now in " + room});
+		socket.emit('usersList', {usersList: usernames});
 		socket.broadcast.to(room).emit('successMsg', {text: users[socket.id].name + " has joined the room"});
 	});
 };
 
 var setupRoomListListener = function(socket, io) {
 	socket.on('listRooms', function() {
-		socket.emit('normalMsg', {text: "The rooms are: "});
+		socket.emit('successMsg', {text: "The rooms are: "});
 		for(var room in io.sockets.manager.rooms) {
 			if (room != "") {
-				getUsernamesInRoom(room.slice(1, room.length), io);
-				
-				// console.log("Sliced" + io.sockets.clients(room.slice(1, room)).length);
-				// io.sockets.emit('normalMsg', {text: "*" + io.sockets.clients(room.slice(1, room.length).lenght)});
-				io.sockets.emit('normalMsg', {text: "*" + room.slice(1, room.length) + " (" + 'numUsers' + ")"});
+				var slicedRoom = room.slice(1, room.length);
+				var numUsers = io.sockets.clients(slicedRoom).length
+
+				io.sockets.emit('successMsg', {text: "-" + slicedRoom + " (" + numUsers + ")"});
 			}
 		}
 	});
@@ -85,10 +86,8 @@ var setupRoomListListener = function(socket, io) {
 var setupDisconnectListener = function(socket) {
 	socket.on('disconnect', function(){
 		
-		var room = users[socket.id].room//delete this line
-		
 		if (users[socket.id].room) {
-			socket.broadcast.to(users[socket.id].room).emit('normalMsg', {text: users[socket.id].name + " has left the room"});
+			socket.broadcast.to(users[socket.id].room).emit('successMsg', {text: users[socket.id].name + " has left the room"});
 		}		
 		if(users[socket.id].name) {
 			removeFromTakenNames(users[socket.id].name);
@@ -99,15 +98,13 @@ var setupDisconnectListener = function(socket) {
 };
 
 var getUsernamesInRoom = function(room, io) {
-	var socketsInRoom = io.sockets.clients(room.slice(1, room))
+	var socketsInRoom = io.sockets.clients(room);
 	var usernames = [];
 	
-	for(var socket in socketsInRoom) {
-		
-		console.log(users[socket.id].name);
-		usernames += users[socket.id].name;
+	for(var i = 0; i < socketsInRoom.length; i++) {
+		usernames.push(users[socketsInRoom[i].id].name);
 	};
-		
+	console.log(usernames);
 	return usernames;
 };
 

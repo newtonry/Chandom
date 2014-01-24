@@ -1,12 +1,11 @@
 var fs = require("fs");
 var mime = require('mime');
 
-//hangs up if file isn't there
 var serveFile = function(response, path) {	
-	console.log('somebody is requesting' + path);
 	fs.readFile(path, function(error, data) {
 		if (error) {
-			response.writeHead(400);
+			response.writeHead(404, {"Content-Type": "text/html"});
+			response.end("<h1>404: The requested content is missing!</h1>");
 		} else {
 			response.writeHead(200, {"Content-Type": mime.lookup(path)});
 			response.end(data);			
