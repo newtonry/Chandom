@@ -1,10 +1,29 @@
 {
-    "name": "chandom",
-    "description": "A randomized chat application",
-    "version": "0.9.9",
-    "private": true,
-    "dependencies": {
-      "socket.io": "~0.9.6",
-      "mime" : "~1.2.7"
-    }
+  "name": "chandom",
+  "description": "A randomized chat application",
+  "version": "0.9.9",
+  "private": true,
+  "dependencies": {
+    "socket.io": "~0.9.6",
+    "mime": "~1.2.7"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "main": "server.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/newtonry/Chandom.git"
+  },
+  "keywords": [
+    "chat",
+    "random"
+  ],
+  "author": "Ryan von Kunes Newton",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/newtonry/Chandom/issues"
+  },
+  "homepage": "https://github.com/newtonry/Chandom"
 }
