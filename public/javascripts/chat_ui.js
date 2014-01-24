@@ -22,17 +22,20 @@
 
 	var setupSocketListeners = function() {
 	  socket.on('normalMsg', function (data) {
-			$('#chat-log').append("<p>" + data['text'] + "</p>");
+			$('#chat-log').find('p').removeClass('last-line');
+
 			$("#chat-log").scrollTop($("#chat-log")[0].scrollHeight);
+			var $randomLine = pickRandomLine();
+			$("<p class='chat-line last-line'>" + data['text'] + "</p>").insertAfter($randomLine);
 	  });
 
 	  socket.on('warningMsg', function (data) {
-			$('#chat-log').append("<p class='warning'>" + data['text'] + "</p>");
+			$('#chat-log').append("<p class='chat-line warning'>" + data['text'] + "</p>");
 			$("#chat-log").scrollTop($("#chat-log")[0].scrollHeight);
 	  });
 
 	  socket.on('successMsg', function (data) {
-			$('#chat-log').append("<p class='success'>" + data['text'] + "</p>");
+			$('#chat-log').append("<p class='chat-line success'>" + data['text'] + "</p>");
 			$("#chat-log").scrollTop($("#chat-log")[0].scrollHeight);
 		});
 		
@@ -41,10 +44,15 @@
 		});
 	};
 
+	var pickRandomLine = function() {
+		var randomNumber = Math.floor(Math.random() * ($('#chat-log').find('p').length) + 1);
+		return $("#chat-log").find("p:nth-child(" + randomNumber + ")");
+	};
+
 	$(document).ready(function() {
 		chat = new Chandom.Chat(socket);
 
-		$('#chat-log').append("<p class='success'>Welcome to Chandom! Please choose a username.</p>");
+		$('#chat-log').append("<p class='chat-line success'>Welcome to Chandom! Please choose a username.</p>");
 
 		setupSocketListeners();
 		

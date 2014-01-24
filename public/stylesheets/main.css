@@ -45,6 +45,7 @@ html {
 
 body {
 	background-color: #dddddd;
+	font-family: 'Gloria Hallelujah', cursive;
 	height: 100%;
 	line-height: 1;
 }
@@ -56,14 +57,18 @@ body {
 }
 
 #chat-input {
+	border: none;
+	background-color: rgba(0,100,255, .05);
 	float: left;
 	height: 100%;
 	padding:0px;
 	width:75%;
-	border: none;
+
 }
 
 #chat-log {
+/*	background-color: rgba(0,150,100, .05);*/
+	background-color: rgba(230,0,47, .1);
 	height: 100%;
 	float:left;
 	overflow-y: scroll;
@@ -71,7 +76,6 @@ body {
 }
 
 #conversation {
-	background-color: rgba(0,100,255, .1);
 	height: 100%;
 }
 
@@ -82,17 +86,69 @@ body {
   height:5%;
 }
 
+
 #send-input {
+	-moz-box-shadow:inset 0px 1px 0px 0px #f9eca0;
+	-webkit-box-shadow:inset 0px 1px 0px 0px #f9eca0;
+	box-shadow:inset 0px 1px 0px 0px #f9eca0;
+	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #f0c911), color-stop(1, #f2ab1e) );
+	background:-moz-linear-gradient( center top, #f0c911 5%, #f2ab1e 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#f0c911', endColorstr='#f2ab1e');
+	background-color:#f0c911;
+	-webkit-border-top-left-radius:0px;
+	-moz-border-radius-topleft:0px;
+	border-top-left-radius:0px;
+	-webkit-border-top-right-radius:0px;
+	-moz-border-radius-topright:0px;
+	border-top-right-radius:0px;
+	-webkit-border-bottom-right-radius:0px;
+	-moz-border-radius-bottomright:0px;
+	border-bottom-right-radius:0px;
+	-webkit-border-bottom-left-radius:0px;
+	-moz-border-radius-bottomleft:0px;
+	border-bottom-left-radius:0px;
+	text-indent:0;
+	border:1px solid #e65f44;
+	display:inline-block;
+	color:#c92200;
+	font-family: 'Gloria Hallelujah', cursive;	
+	font-size:15px;
+	height:100%;
+	line-height:40px;
+	width:25%;
+	text-decoration:none;
+	text-align:center;
+	text-shadow:1px 1px 0px #ded17c;
+}
+#send-input:hover {
+	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #f2ab1e), color-stop(1, #f0c911) );
+	background:-moz-linear-gradient( center top, #f2ab1e 5%, #f0c911 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#f2ab1e', endColorstr='#f0c911');
+	background-color:#f2ab1e;
+}#send-input:active {
+	position:relative;
+	top:1px;
+}
+
+/*#send-input {
 	padding:0px;
 	float:left;
 	height: 100%;
 	width:25%;
 	border: none;
 }
-
+*/
 #shin-image {
 	float: left;
 	width: 25%;
+}
+
+.chat-line {
+	margin-left: 2.5%;
+}
+
+.last-line {
+	background-color: #FFED89;
 }
 
 .success {

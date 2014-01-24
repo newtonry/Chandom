@@ -37,7 +37,7 @@ var setupNameListener = function(socket) {
 		
 		if (indexOf(name, takenNames) != -1) {
 			socket.emit('warningMsg', {text: name + " is already taken! Please choose another name."});
-		} else if (name === "") {
+		} else if (name === "" || name[0] === "/") {
 			socket.emit('warningMsg', {text: "That is not a valid name!"});			
 		} else {
 			removeFromTakenNames(users[socket.id].name);
@@ -72,7 +72,11 @@ var setupRoomListListener = function(socket, io) {
 		socket.emit('normalMsg', {text: "The rooms are: "});
 		for(var room in io.sockets.manager.rooms) {
 			if (room != "") {
-				io.sockets.emit('normalMsg', {text: "*" + room.slice(1,room.length)});
+				getUsernamesInRoom(room.slice(1, room.length), io);
+				
+				// console.log("Sliced" + io.sockets.clients(room.slice(1, room)).length);
+				// io.sockets.emit('normalMsg', {text: "*" + io.sockets.clients(room.slice(1, room.length).lenght)});
+				io.sockets.emit('normalMsg', {text: "*" + room.slice(1, room.length) + " (" + 'numUsers' + ")"});
 			}
 		}
 	});
@@ -94,6 +98,19 @@ var setupDisconnectListener = function(socket) {
 	});
 };
 
+var getUsernamesInRoom = function(room, io) {
+	var socketsInRoom = io.sockets.clients(room.slice(1, room))
+	var usernames = [];
+	
+	for(var socket in socketsInRoom) {
+		
+		console.log(users[socket.id].name);
+		usernames += users[socket.id].name;
+	};
+		
+	return usernames;
+};
+
 var removeFromTakenNames = function(name) {
 	var ind = indexOf(name, takenNames);
 	if (ind != -1) {
@@ -111,7 +128,7 @@ var indexOf = function(value, arr) {
 	return -1;
 };
 
-function escapeHTML(input) {
+var escapeHTML = function(input) {
     return String(input).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
