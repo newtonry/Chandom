@@ -13,13 +13,20 @@
  <body>
 	 <!-- <h1>Chandom</h1> -->
 	 <!-- <p>Actions: /name newname, /join roomname, /rooms</p> -->
+	 <div id='title-bar'>
+		 <h1>Welcome to Chandom!</h1>
+		 <h4>A chat random client. See what conversations you can have as your lines are randomly inserted!</h4>
+		 <p id='commands'>Commands: /name, /join, /rooms, /disconnect</p>
+	 </div>
 	 <div id='chat-area'>
 		 <div id='conversation'>
 			 <ul id='chat-log'></ul>
-			 <img id='shin-image' src='images/shinchan.png'>
+			 <div id='right-image-holder'>
+			 	<img id='shin-image' src='images/shinchan.png'>
+		 	 </div>
 		 </div>
 		 <div id='input-bar'>
-			 <input type='text' id='chat-input'>
+			 <input type='text' id='chat-input' placeholder="Type something fun!">
 			 <button id='send-input'>Send</button>
 		 </div>
 	 </div>

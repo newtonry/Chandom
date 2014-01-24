@@ -2,6 +2,25 @@
 	var Chandom = root.Chandom = (root.Chandom || {});
 	var socket = io.connect();
 	var username;
+
+	$(document).ready(function() {
+		chat = new Chandom.Chat(socket);
+		appendMessage('success', 'Please choose a username.')
+
+		setupSocketListeners();
+		
+		$("#chat-input").focus();
+		
+		$("#chat-input").keyup(function(event){
+			if(event.keyCode == 13){
+	      handleInput();
+	    }
+		});
+		
+		$("#send-input").click(function() {
+			handleInput();
+		});
+	});
 		
 	var handleInput = function() {
 		var input = $("#chat-input").val();
@@ -15,6 +34,9 @@
 			chat.setRoom(input.slice(6, input.length));
 		} else if (input.slice(0,6) === "/rooms") {
 			chat.listRooms();
+		} else if (input.slice(0,11) === "/disconnect") {
+			chat.disconnect();
+			appendMessage('warning', "You are now disconnected");
 		} else if (input.slice(0,1) === "/") {
 			appendMessage('warning', "That is not a valid command!");
 		} else {
@@ -26,10 +48,11 @@
 	  socket.on('normalMsg', function (data) {
 			$('#chat-log').find('p').removeClass('last-line');
 
-			$("#chat-log").scrollTop($("#chat-log")[0].scrollHeight);
 			var $randomLine = pickRandomLine();
 			$("<p class='chat-line last-line'>" + data['text'] + "</p>").insertAfter($randomLine);
 			$("#chat-log").scrollTop($("#chat-log")[0].scrollHeight);
+			
+			moveShinChan();
 	  });
 
 	  socket.on('warningMsg', function(data) {
@@ -67,20 +90,7 @@
 		return $("#chat-log").find("p:nth-child(" + randomNumber + ")");
 	};
 
-	$(document).ready(function() {
-		chat = new Chandom.Chat(socket);
-		appendMessage('success', 'Welcome to Chandom! Please choose a username.')
-
-		setupSocketListeners();
-		
-		$("#chat-input").keyup(function(event){
-			if(event.keyCode == 13){
-	      handleInput();
-	    }
-		});
-		
-		$("#send-input").click(function() {
-			handleInput();
-		});
-	});
+	var moveShinChan = function() {
+		$('#shin-image').offset({top: $(".last-line").offset().top - 60});
+	};
 })(this);

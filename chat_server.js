@@ -46,7 +46,7 @@ var setupNameListener = function(socket) {
 			takenNames.push(name);
 			
 			socket.emit('setName', {name: name});
-			socket.emit('successMsg', {text: "You're name is now " + name});
+			socket.emit('successMsg', {text: "Your name is now " + name});
 		}
 	});
 };
@@ -55,7 +55,6 @@ var setupRoomChangeListener = function(socket, io) {
 	socket.on('room', function(data) {
 		var room = escapeHTML(data.room);
 		
-		//leave old room
 		if(users[socket.id].room) {
 			socket.leave(users[socket.id].room);
 		}

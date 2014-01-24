@@ -20,4 +20,8 @@
 	Chat.prototype.listRooms = function() {
 		this.socket.emit('listRooms');
 	};
+	
+	Chat.prototype.disconnect = function() {
+		this.socket.disconnect();
+	};
 })(this);
