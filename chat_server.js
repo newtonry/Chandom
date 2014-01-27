@@ -70,15 +70,20 @@ var setupRoomChangeListener = function(socket, io) {
 
 var setupRoomListListener = function(socket, io) {
 	socket.on('listRooms', function() {
-		socket.emit('successMsg', {text: "The rooms are: "});
+		// socket.emit('successMsg', {text: "The rooms are: "});
+		
+		var rooms = [];
+
+
 		for(var room in io.sockets.manager.rooms) {
 			if (room != "") {
 				var slicedRoom = room.slice(1, room.length);
 				var numUsers = io.sockets.clients(slicedRoom).length
-
-				io.sockets.emit('successMsg', {text: "-" + slicedRoom + " (" + numUsers + ")"});
+				
+				rooms.push({name: slicedRoom, numUsers: numUsers});
 			}
 		}
+		socket.emit('roomsList', {rooms: rooms});
 	});
 };
 

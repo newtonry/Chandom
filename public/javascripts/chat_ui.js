@@ -47,6 +47,18 @@
 		socket.on('setName', function(data){
 			username = data.name;
 		});
+
+		socket.on('roomsList', function(data){
+			console.log(data);
+			if (data.rooms.length === 0) {
+				appendMessage('warning', 'There are currently no rooms. Please make one with /join');
+			} else {
+				appendMessage('success', 'The rooms are:');
+				for (var i = 0; i < data.rooms.length; i++) {
+					appendMessage('success', '-' + data.rooms[i].name + ' (' + data.rooms[i].numUsers + ')');
+				}
+			}
+		});
 		
 		socket.on('usersList', function(data){
 			if (data.usersList.length > 0) {
